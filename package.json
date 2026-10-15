@@ -1,21 +1,28 @@
 {
-    "name":"start-over-campaign",
-    "version":"1.0.0",
-    "private":true,
-    "type":"module",
-    "scripts":{
-        "dev":"vite --host 127.0.0.1",
-        "build":"vite build",
-        "preview":"vite preview --host 127.0.0.1",
-        "test":"node --test tests/*.test.mjs",
-        "check:render":"node scripts/verify-render.mjs"
-    },
-    "dependencies":{
-        "@react-three/drei":"^10.0.0",
-        "@react-three/fiber":"^9.0.0",
-        "react":"^19.0.0",
-        "react-dom":"^19.0.0",
-        "three":"^0.180.0"
-    },
-    "devDependencies":{"vite":"^7.0.0"}
+  "name": "start-over-campaign",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "node scripts/build.mjs",
+    "preview": "vite preview --host 127.0.0.1",
+    "test": "node --test tests/*.test.mjs",
+    "check:render": "node scripts/verify-render.mjs",
+    "check:production": "node scripts/verify-production.mjs"
+  },
+  "dependencies": {
+    "@react-three/drei": "^10.0.0",
+    "@react-three/fiber": "^9.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "three": "^0.180.0"
+  },
+  "devDependencies": {
+    "vite": "^7.0.0",
+    "esbuild": "0.28.2"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  }
 }

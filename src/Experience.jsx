@@ -1,14 +1,15 @@
-import React, { Component, Suspense, lazy, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { campaign } from './data/campaign';
-import { candidateDestination, candidateCampaignLink } from './lib/arena.mjs';
+import { candidateDestination, candidateCampaignLink, candidateIdFromLocation } from './lib/arena.mjs';
 import './arena.css';
 import CandidateCarousel from './components/CandidateCarousel.jsx';
 import CampaignHub from './components/CampaignHub.jsx';
 import Portrait from './components/CandidatePortrait.jsx';
-import CampusFallback from './components/CampusFallback.jsx';
+import AdaptiveBackdrop from './components/AdaptiveBackdrop.jsx';
 import AcademicMotifs from './components/AcademicMotifs.jsx';
+import PageMetadata from './components/PageMetadata.jsx';
+import { indexableCandidates } from './lib/seo.mjs';
 
-const ArenaScene = lazy(() => import('./ArenaScene.jsx'));
 const Arrow = () => <span aria-hidden="true">↗</span>;
 
 function firstVisit() { try { return sessionStorage.getItem('arena-guide-seen') !== 'yes'; } catch { return true; } }
@@ -16,15 +17,10 @@ function firstVisit() { try { return sessionStorage.getItem('arena-guide-seen') 
 function Emblem({ image, className = '' }) {
   const [failed, setFailed] = useState(false);
   useEffect(() => setFailed(false), [image]);
-  return <span className={`emblem ${className}`} aria-hidden="true">{image && !failed ? <img src={image} alt="" onError={() => setFailed(true)}/> : <svg viewBox="0 0 100 100"><path d="M50 5 89 28v44L50 95 11 72V28Z"/><path d="m50 21 25 15v28L50 79 25 64V36Z"/><path d="M35 63V38h30M35 63l30-25M50 5v16M50 79v16M11 28l14 8M75 64l14 8"/></svg>}</span>;
+  return <span className={`emblem ${className}`} aria-hidden="true">{image && !failed ? <img src={image} alt="" decoding="async" onError={() => setFailed(true)}/> : <svg viewBox="0 0 100 100"><path d="M50 5 89 28v44L50 95 11 72V28Z"/><path d="m50 21 25 15v28L50 79 25 64V36Z"/><path d="M35 63V38h30M35 63l30-25M50 5v16M50 79v16M11 28l14 8M75 64l14 8"/></svg>}</span>;
 }
 
 
-class SceneBoundary extends Component {
-  state = { failed: false };
-  static getDerivedStateFromError() { return { failed: true }; }
-  render() { return this.state.failed ? <CampusFallback/> : this.props.children; }
-}
 
 function Modal({ title, className = '', children, onClose }) {
   const ref = useRef(null);
@@ -39,9 +35,9 @@ function Modal({ title, className = '', children, onClose }) {
 }
 
 const guideSteps = [
-  { index: '01', title: 'Welcome to a new dimension.', text: 'The candidate stage floats above a connected university, with learning labs, floating ideas, and a future city on the horizon. Follow the light, rotate the line-up, and find the voices shaping what comes next.', hint: 'YOUR FIRST MISSION: EXPLORE THE STAGE', symbol: '✧' },
+  { index: '01', title: 'Welcome to a new dimension.', text: 'There is a floating candidate stage as the home screen which shows the excellence of Redeemers university. Follow the light, rotate the line-up, and find the voices shaping what comes next.', hint: 'YOUR FIRST MISSION: EXPLORE THE STAGE', symbol: '✧' },
   { index: '02', title: 'Take the line-up for a spin.', text: 'Swipe or drag the cards left and right. You can also use the on-screen arrows, portrait thumbnails, or your keyboard’s left and right arrow keys while the stage is focused.', hint: 'SWIPE  ↔  /  ARROW KEYS  ← →', symbol: '↔' },
-  { index: '03', title: 'Step into a candidate’s world.', text: 'Tap a side card to bring it forward. Tap the large front card to open that candidate’s detail page. The campaign button on that page opens their external link. Use “View as list” to see every candidate together.', hint: 'BRING FORWARD → TAP TO OPEN', symbol: '↗' },
+  { index: '03', title: 'Step into a candidate’s world.', text: 'Tap a side card to bring it forward. Tap the front photo or its gold Meet button to open that candidate’s detail page. The campaign button on that page opens their external link. Use “View as list” to see every candidate together.', hint: 'BRING FORWARD → TAP TO OPEN', symbol: '↗' },
 ];
 
 function NavigationGuide({ onClose }) {
@@ -90,18 +86,18 @@ function CandidateDirectory({ candidates, onClose }) {
 
 export function CandidateProfile({ candidate, config }) {
   const campaignLink = candidateCampaignLink(candidate);
-  return <div className="experience profile-experience" data-motion="on" data-quality="cinematic">
-    <div className="space-grain"/>
+  return <div className="experience profile-experience" data-motion="on" data-quality="adaptive">
+    <PageMetadata config={config} candidate={candidate}/><div className="space-grain"/>
     <header className="space-header">
-      <a className="space-brand" href="./">
+      <a className="space-brand" href="/">
         <Emblem image={config.themeImage}/>
-        <span>UPGRADE<small>RUNACOS / A NEW DIMENSION</small></span>
+        <span>RUNACOS<small> A NEW DIMENSION</small></span>
       </a>
-      <a className="outline-button" href="./">← Back to the arena</a>
+      <a className="outline-button" href="/">← Back to the arena</a>
     </header>
     <main className="profile-main">
       <div className="profile-portrait">
-        <Portrait candidate={candidate}/>
+        <Portrait candidate={candidate} priority/>
         <span className="portrait-caption">
           {candidate.configured ? 'CANDIDATE DOSSIER' : 'EMPTY CANDIDATE SLOT'}
         </span>
@@ -114,7 +110,7 @@ export function CandidateProfile({ candidate, config }) {
         <p className="profile-detail">{candidate.detail}</p>
         {!candidate.image && <p className="profile-note">Candidate portrait coming soon.</p>}
         {campaignLink ? <a className="gold-button" href={campaignLink} target="_blank" rel="noopener noreferrer" aria-label="Explore campaign (opens in a new tab)">Explore campaign <Arrow/></a> : <p className="profile-note">Campaign link coming soon.</p>}
-        <a className="back-link" href="./">← Return to the revolving stage</a>
+        <a className="back-link" href="/">← Return to the revolving stage</a>
       </div>
     </main>
     <footer className="space-footer">
@@ -124,15 +120,15 @@ export function CandidateProfile({ candidate, config }) {
   </div>;
 }
 
-export default function Experience() {
+export default function Experience({ candidateId = candidateIdFromLocation(typeof location === 'undefined' ? null : location) } = {}) {
   const config = campaign;
   const motion = true;
-  const quality = 'cinematic';
-  const [overlay, setOverlay] = useState(() => firstVisit() ? 'guide' : null);
+  const quality = 'adaptive';
+  const [overlay, setOverlay] = useState(null);
+  useEffect(() => { if (!candidateId && firstVisit()) setOverlay('guide'); }, [candidateId]);
   const [inView, setInView] = useState(true);
   const [pageVisible, setPageVisible] = useState(true);
   const arena = useRef(null), pointer = useRef({ x: 0, y: 0 });
-  const candidateId = typeof location === 'undefined' ? null : new URLSearchParams(location.search).get('candidate');
   const profile = config.candidates.find(candidate => candidate.id === candidateId);
 
   useEffect(() => {
@@ -148,15 +144,16 @@ export default function Experience() {
   }, []);
   function closeGuide() { try { sessionStorage.setItem('arena-guide-seen', 'yes'); } catch {} setOverlay(null); }
   if (profile) return <CandidateProfile candidate={profile} config={config}/>;
+  if (candidateId) return <div className="experience not-found"><PageMetadata config={config} notFound/><main><p className="eyebrow">404 / PROFILE NOT FOUND</p><h1>This candidate profile is unavailable.</h1><p>Explore the current candidate line-up from the arena.</p><a className="gold-button" href="/">Return to the arena <Arrow/></a></main></div>;
 
-  return <div className="experience" data-motion="on" data-quality={quality}>
-    <AcademicMotifs/>
+  return <div className="experience" data-motion="on" data-quality={quality} data-page-active={pageVisible}>
+    <PageMetadata config={config}/><AcademicMotifs/>
     <a className="skip-link" href="#candidate-stage">Skip to candidate stage</a><div className="space-grain" aria-hidden="true"/>
     <div className="theme-cloud" aria-hidden="true">{Array.from({ length: 12 }, (_, index) => <div className={`theme-shard shard-${index}`} key={index} style={{ '--spin': `${index * 29}deg`, '--delay': `${index * -2.3}s` }}><Emblem image={config.themeImage}/><span>{config.themeImage ? 'UPGRADE' : 'YOUR EMBLEM'}</span></div>)}</div>
     <header className="space-header">
       <a className="space-brand" href="#">
         <Emblem image={config.themeImage}/>
-        <span>UPGRADE<small>RUNACOS / A NEW DIMENSION</small></span>
+        <span>RUNACOS<small>/ A NEW DIMENSION</small></span>
       </a>
       <nav aria-label="Main navigation">
         <a href="#candidate-stage">The line-up</a>
@@ -165,7 +162,7 @@ export default function Experience() {
       </nav>
 </header>
     <main>
-      <section className="arena" ref={arena} aria-labelledby="arena-heading" onPointerMove={event => {
+      <section className="arena" data-active={inView && pageVisible} ref={arena} aria-labelledby="arena-heading" onPointerMove={event => {
         if (event.pointerType === 'touch') return;
         const bounds = event.currentTarget.getBoundingClientRect();
         pointer.current = { x: (event.clientX - bounds.left) / bounds.width * 2 - 1, y: (event.clientY - bounds.top) / bounds.height * 2 - 1 };
@@ -173,11 +170,7 @@ export default function Experience() {
         event.currentTarget.style.setProperty('--look-y', `${pointer.current.y * 4}px`);
       }} onPointerLeave={() => { pointer.current = { x: 0, y: 0 }; arena.current?.style.setProperty('--look-x', '0px'); arena.current?.style.setProperty('--look-y', '0px'); }}>
         <div className="arena-scene" aria-hidden="true">
-          <SceneBoundary>
-            <Suspense fallback={<CampusFallback/>}>
-              <ArenaScene motion={inView && pageVisible} pointer={pointer} quality={quality}/>
-            </Suspense>
-          </SceneBoundary>
+          <AdaptiveBackdrop active={inView && pageVisible} pointer={pointer}/>
         </div>
         <div className="arena-vignette" aria-hidden="true"/>
         <div className="arena-title">
@@ -231,7 +224,7 @@ export default function Experience() {
           <p>Get to know the candidates.<br/>Explore the people and ideas shaping what comes next.</p>
           <div className="hub-halo" aria-hidden="true"><i/><i/><i/></div>
         </div>
-        <CampaignHub count={config.candidates.length} onBrowse={() => setOverlay('directory')} onGuide={() => setOverlay('guide')}/>
+        <CampaignHub count={config.candidates.length} profiles={indexableCandidates(config)} onBrowse={() => setOverlay('directory')} onGuide={() => setOverlay('guide')}/>
       </section>
     </main>
     <footer className="space-footer"><a className="space-brand" href="#"><Emblem image={config.themeImage}/><span>UPGRADE<small>RUNACOS</small></span></a><p>A future worth building. Together.</p><span>© {new Date().getFullYear()} · Candidate showcase concept</span><a href="#">BACK TO ORBIT ↑</a></footer>

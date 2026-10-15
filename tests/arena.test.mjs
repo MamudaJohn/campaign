@@ -20,11 +20,11 @@ test('the circular stage keeps exactly one front card across all rotations', () 
 });
 
 test('candidate cards always open the detail page, including candidates with campaign links', () => {
-  assert.equal(candidateDestination({ id: 'john-mamuda', link: '' }), '?candidate=john-mamuda');
-  assert.equal(candidateDestination({ id: 'candidate 02', link: '' }), '?candidate=candidate%2002');
-  assert.equal(candidateDestination({ id: 'test', link: 'https://example.com/campaign' }), '?candidate=test');
-  assert.equal(candidateDestination({ id: 'test', link: 'javascript:alert(1)' }), '?candidate=test');
-  assert.equal(candidateDestination({ id: 'test', link: 'data:text/html,hello' }), '?candidate=test');
+  assert.equal(candidateDestination({ id: 'john-mamuda', link: '' }), '/candidates/john-mamuda/');
+  assert.equal(candidateDestination({ id: 'candidate 02', link: '' }), '/candidates/candidate%2002/');
+  assert.equal(candidateDestination({ id: 'test', link: 'https://example.com/campaign' }), '/candidates/test/');
+  assert.equal(candidateDestination({ id: 'test', link: 'javascript:alert(1)' }), '/candidates/test/');
+  assert.equal(candidateDestination({ id: 'test', link: 'data:text/html,hello' }), '/candidates/test/');
 });
 
 test('the detail-page campaign button accepts web destinations and omits missing or invalid links', () => {

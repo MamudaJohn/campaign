@@ -7,6 +7,7 @@ import { renderToStaticMarkup, renderToString } from 'react-dom/server';
 import { build } from 'esbuild';
 import { campaign } from '../src/data/campaign.js';
 import { candidateDestination, candidateCampaignLink } from '../src/lib/arena.mjs';
+import { indexableCandidates } from '../src/lib/seo.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const directory = path.join(root, '.verification');
@@ -22,16 +23,18 @@ try {
   const home = renderToString(React.createElement(Experience));
   assert.match(home, /Your future/);
   assert.ok(home.includes(text(primary.name)));
-  assert.match(home, /Navigation guide/);
+  assert.match(home, /Open navigation guide/);
   assert.match(home, /class="campaign-hub"/);
   assert.match(home, /Meet the candidates/);
   assert.match(home, /Explore the vision/);
   assert.match(home, /Find your way/);
   assert.doesNotMatch(home, /<form|<input|<select|<textarea|Save my details|Count me in/);
   assert.doesNotMatch(home, /Scene studio|Choose candidate portrait|type="file"/);
-  assert.match(home, /data-motion="on" data-quality="cinematic"/);
+  assert.match(home, /data-motion="on" data-quality="adaptive"/);
   assert.doesNotMatch(home, /quality-button|motion-button|rotation-control|Pause all animations|Play animations|Switch to balanced/);
   assert.match(home, /campus-fallback/);
+  assert.match(home, /data-render-mode="light"/);
+  assert.match(home, /light-crowd/);
   assert.match(home, /campus-skyline/);
   assert.match(home, /campus-connections/);
   assert.match(home, /CONNECTED KNOWLEDGE|curiosity\.connect/);
@@ -39,11 +42,18 @@ try {
   assert.doesNotMatch(home, /fallback-buildings|city-fallback/);
   assert.match(home, /VIRTUAL AUDIENCE/);
   assert.match(home, /class="carousel-dock"/);
+  assert.match(home, /Get to know your candidates/);
+  assert.match(home, /Tap a photo to read their story/);
+  assert.equal((home.match(/data-action="open-profile"/g) || []).length, 1, 'Exactly one front photo opens a profile');
+  assert.equal((home.match(/data-action="bring-forward"/g) || []).length, Math.min(3, campaign.candidates.length) - 1);
+  assert.equal((home.match(/aria-describedby="candidate-photo-help"/g) || []).length, 1);
+  assert.equal((home.match(/class="portrait-action"/g) || []).length, Math.min(3, campaign.candidates.length));
+  assert.ok(home.includes(`<strong>${text(primary.configured ? `Meet ${primary.name}` : 'Explore this candidate')}</strong>`));
   assert.equal((home.match(/class="candidate-thumbnail"/g) || []).length, campaign.candidates.length);
   const portraitGradients = [...home.matchAll(/id="(figure-[^"]+)"/g)].map(match => match[1]);
   assert.equal(new Set(portraitGradients).size, portraitGradients.length, 'Repeated portraits need unique SVG gradient IDs');
-  assert.equal((home.match(/class="candidate-card"/g) || []).length, campaign.candidates.length);
-  campaign.candidates.forEach(candidate => {
+  assert.equal((home.match(/class="candidate-card"/g) || []).length, Math.min(3, campaign.candidates.length));
+  indexableCandidates(campaign).forEach(candidate => {
     assert.ok(home.includes(`href="${text(candidateDestination(candidate))}"`));
     const external = candidateCampaignLink(candidate);
     if (external) assert.ok(!home.includes(`href="${text(external)}"`), 'The homepage must open profiles before campaign links');
@@ -54,7 +64,7 @@ try {
   const homeWithStoredEdits = renderToString(React.createElement(Experience));
   assert.ok(homeWithStoredEdits.includes(text(primary.name)));
   assert.doesNotMatch(homeWithStoredEdits, /BROWSER_PROFILE_OVERRIDE|browser-portrait\.jpg|browser-campaign/);
-  assert.match(homeWithStoredEdits, /data-motion="on" data-quality="cinematic"/);
+  assert.match(homeWithStoredEdits, /data-motion="on" data-quality="adaptive"/);
   globalThis.location = { search: `?candidate=${encodeURIComponent(primary.id)}` };
   const profile = renderToString(React.createElement(Experience));
   assert.match(profile, /CANDIDATE PROFILE/);
@@ -64,7 +74,7 @@ try {
   assert.match(profile, /Return to the revolving stage/);
   assert.doesNotMatch(profile, /class="candidate-card"/);
   assert.doesNotMatch(profile, /BROWSER_PROFILE_OVERRIDE|browser-portrait\.jpg|browser-campaign|<input|<textarea|Scene studio/);
-  assert.match(profile, /data-motion="on" data-quality="cinematic"/);
+  assert.match(profile, /data-motion="on" data-quality="adaptive"/);
   const linkedCandidate = { ...primary, link: 'https://example.com/campaign' };
   const linkedProfile = renderToString(React.createElement(CandidateProfile, { candidate: linkedCandidate, config: campaign }));
   assert.match(linkedProfile, /href="https:\/\/example\.com\/campaign" target="_blank" rel="noopener noreferrer"/);
@@ -75,7 +85,7 @@ try {
     assert.match(unlinkedProfile, /Campaign link coming soon/);
     assert.doesNotMatch(unlinkedProfile, /Explore campaign|href="javascript:/);
   }
-  console.log('Candidate cards open detail pages before external campaigns; the campaign hub replaces the form. Cinematic motion and source-only profiles are preserved.');
+  console.log('Candidate cards open detail pages before external campaigns; the campaign hub replaces the form. Adaptive motion and source-only profiles are preserved.');
 } finally {
   delete globalThis.location;
   if (previousStorage) Object.defineProperty(globalThis, 'localStorage', previousStorage);

@@ -9,7 +9,15 @@ export function relativePosition(index, active, length) {
 }
 
 export function candidateDestination(candidate) {
-  return `?candidate=${encodeURIComponent(candidate.id)}`;
+  return `/candidates/${encodeURIComponent(candidate.id)}/`;
+}
+
+// Keep previously shared query-string profile links working.
+export function candidateIdFromLocation(location) {
+  const query = new URLSearchParams(location?.search || '').get('candidate');
+  if (query) return query;
+  const match = (location?.pathname || '').match(/\/candidates\/([^/]+)\/?$/);
+  try { return match ? decodeURIComponent(match[1]) : null; } catch { return null; }
 }
 
 // External destinations are available only from the candidate's detail page.

@@ -1,8 +1,9 @@
 import React from 'react';
+import { candidateDestination } from '../lib/arena.mjs';
 
 const Arrow = () => <span className="hub-action-arrow" aria-hidden="true">&#8599;</span>;
 
-export default function CampaignHub({ count, onBrowse, onGuide }) {
+export default function CampaignHub({ count, profiles = [], onBrowse, onGuide }) {
   return <div className="campaign-hub">
     <div className="hub-map" aria-hidden="true">
       <i/><i/><i/>
@@ -23,6 +24,7 @@ export default function CampaignHub({ count, onBrowse, onGuide }) {
         <span className="hub-action-number" aria-hidden="true">03</span><span><strong>Find your way</strong><small>Reopen the guide to exploring the arena.</small></span><Arrow/>
       </button>
     </div>
+    <nav className="hub-profile-links" aria-label="Candidate profiles">{profiles.map(candidate => <a key={candidate.id} href={candidateDestination(candidate)}>Read {candidate.name}'s profile <span aria-hidden="true">&#8599;</span></a>)}</nav>
     <p className="hub-footnote">Every candidate has a story. Start with their profile.</p>
   </div>;
 }

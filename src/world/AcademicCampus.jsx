@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Environment, Lightformer, Line, MeshReflectorMaterial } from '@react-three/drei';
+import { Environment, Lightformer, Line } from '@react-three/drei';
 import * as THREE from 'three';
 import { COURTYARD_LEVEL, createCampusLayout } from './campus-layout.mjs';
 import { createCampusSign, createCourtyardTextures, createLearningDisplay } from './campus-materials';
@@ -35,11 +35,11 @@ function AcademicWing({ building }) {
   </group>;
 }
 
-function Courtyard({ cinematic }) {
+function Courtyard() {
   const maps = useMemo(createCourtyardTextures, []);
   useEffect(() => () => maps.roughnessMap.dispose(), [maps]);
   return <group>
-    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, COURTYARD_LEVEL, -16]} receiveShadow><planeGeometry args={[130, 130]}/>{cinematic ? <MeshReflectorMaterial resolution={512} blur={[350, 160]} mixBlur={.9} mixStrength={.45} mirror={.12} depthScale={.2} color="#1c2b3a" metalness={.25} roughness={.55} roughnessMap={maps.roughnessMap}/> : <meshStandardMaterial color="#1c2b3a" metalness={.25} roughness={.55} roughnessMap={maps.roughnessMap}/>}</mesh>
+    <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, COURTYARD_LEVEL, -16]} receiveShadow><planeGeometry args={[130, 130]}/><meshStandardMaterial color="#1c2b3a" metalness={.25} roughness={.55} roughnessMap={maps.roughnessMap}/></mesh>
     {[-1, 1].map(side => <group key={side}>
       <mesh position={[side * 7.1, COURTYARD_LEVEL + .035, -13]} receiveShadow><boxGeometry args={[.18, .07, 55]}/><meshStandardMaterial color="#3b4850" roughness={.75}/></mesh>
       {[0, -9, -20].map((z, index) => <group key={z} position={[side * 7.5, COURTYARD_LEVEL, z]}><mesh position={[0, .4, 0]} castShadow receiveShadow><boxGeometry args={[.2, .8, .2]}/><meshStandardMaterial color="#34424b" metalness={.5} roughness={.5}/></mesh><mesh position={[0, .76, 0]}><boxGeometry args={[.21, .12, .21]}/><meshBasicMaterial color="#c9b78c"/></mesh>{index === 0 && <pointLight position={[0, .9, 0]} color="#d9c8a5" intensity={5} distance={6} decay={2}/>}</group>)}
@@ -93,16 +93,16 @@ function GraduationCap({ motion }) {
   </group>;
 }
 
-export default function AcademicCampus({ motion, cinematic }) {
+export default function AcademicCampus({ motion }) {
   const buildings = useMemo(createCampusLayout, []);
   return <>
-    <Environment frames={1} resolution={128} environmentIntensity={.5}>
+    <Environment frames={1} resolution={64} environmentIntensity={.5}>
       <Lightformer form="rect" position={[0, 12, -5]} rotation={[Math.PI / 2, 0, 0]} scale={[20, 9, 1]} color="#abc3d6" intensity={1.8}/>
       <Lightformer form="rect" position={[-12, 3, 2]} rotation={[0, Math.PI / 2, 0]} scale={[8, 10, 1]} color="#567eb2" intensity={1.4}/>
       <Lightformer form="rect" position={[12, 4, -3]} rotation={[0, -Math.PI / 2, 0]} scale={[8, 10, 1]} color="#c7b58d" intensity={1.2}/>
     </Environment>
     {buildings.map(building => <AcademicWing key={building.id} building={building}/>)}
-    <Courtyard cinematic={cinematic}/>
+    <Courtyard/>
     {[-1, 1].map(side => <LearningScreen key={side} side={side} motion={motion}/>)}
     <OpenBook position={[-7.6, 4.8, -9]} rotation={[.5, -.3, -.1]} scale={.6} motion={motion}/>
     <OpenBook position={[-6.8, 2.5, -6]} rotation={[.45, .2, .08]} scale={.42} motion={motion}/>

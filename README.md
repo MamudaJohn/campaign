@@ -4,9 +4,9 @@ A gold-and-blue campaign experience built with HTML, CSS, React, Three.js, React
 
 ## Campus rendering
 
-Cinematic rendering and motion are enabled automatically on every device. Soft lighting, gentle ground reflections, HDR bloom, and higher-resolution shadows are selected. There are no visitor controls to switch rendering quality or disable motion, and previously saved visual preferences are ignored.
+Motion is enabled automatically, with rendering adapted to the device. Phones, touch devices, slow connections, data savers, and constrained computers use the animated lightweight skyline, campus, audience, and CSS 3D candidate carousel. They do not download or run the WebGL scene. Capable desktops load the 3D background after the page becomes interactive. There are no visitor quality or motion switches.
 
-The academic campus uses physically based stone, metal, glass, and paper materials, locally generated teaching-screen and courtyard textures, a local reflection environment, and distance haze. It needs no remote model or HDR asset downloads. The skyline uses instanced towers and locally generated window textures, without adding individual window lights. A lightweight backdrop combines the same skyline, data connections, open-book, research, code, and campus motifs while the 3D scene loads or if WebGL is unavailable. Matching academic line art continues through the lower sections.
+The academic campus uses physically based stone, metal, glass, and paper materials, locally generated teaching-screen and courtyard textures, a local reflection environment, and distance haze. It needs no remote model or HDR asset downloads. The skyline uses instanced towers and locally generated window textures, without adding individual window lights. The lightweight backdrop combines the same skyline, data connections, open-book, research, code, and campus motifs. It is the default on phones and the fallback while desktop 3D loads or when a GPU cannot sustain the scene. Matching academic line art continues through the lower sections.
 
 - src/world/AcademicCampus.jsx: low academic wings, library, courtyard, learning displays, books, research orbits, and graduation cap.
 - src/world/campus-materials.js: procedural academic screens, signs, and courtyard surfaces.
@@ -15,7 +15,9 @@ The academic campus uses physically based stone, metal, glass, and paper materia
 - src/world/skyline-materials.js: procedural window lighting and a soft blue-and-gold horizon glow.
 - src/components/CampusFallback.jsx: a quiet academic background for loading and WebGL fallback.
 - src/components/AcademicMotifs.jsx: subtle academic line art behind the lower sections.
-- src/world/CinematicEffects.jsx: HDR bloom and output tone mapping.
+- src/components/AdaptiveBackdrop.jsx: device policy, deferred desktop 3D, animated lightweight stage and crowd, and GPU failure recovery.
+- src/world/FrameBudget.jsx: 30 FPS request budget, adaptive pixel ratio, and persistent-slow-frame fallback.
+- src/lib/performance.mjs: conservative device selection and shared render limits.
 - src/ArenaScene.jsx: camera, stage, audience, shadows, and scene composition.
 
 ## Start and build
@@ -40,6 +42,8 @@ Use `npm.cmd` on PowerShell systems that block `npm.ps1`. Deploy the generated `
 
 On phones, cards use a larger stacked layout with 60% of their height reserved for the photograph. Framing and edge details give the display more depth while keeping the portrait clear.
 
+The front photo has a persistent gold **Meet [candidate]** action and a tap cue. It stays visible on touchscreens; hover and keyboard focus add a gentle portrait zoom, raised action, and gold frame. Side photos say **Bring forward** to explain the first tap. A readable invitation above the stage and swipe guidance below the controls explain navigation without opening the guide.
+
 Each candidate accepts:
 
 ```js
@@ -56,7 +60,7 @@ Each candidate accepts:
 }
 ```
 
-Every card and directory entry opens the built-in detail page at `?candidate=candidate-id`. The detail page shows the full statement and details, followed by an **Explore campaign** button when `link` contains a valid HTTP(S) URL. That button opens the external destination in a new tab. A blank or invalid link shows a coming-soon note. Each candidate needs a unique `id`; photos belong in `public/images/`.
+Every card and directory entry opens a static detail page at `/candidates/candidate-id/`. Previously shared `?candidate=candidate-id` links still work. The detail page shows the full statement and details, followed by an **Explore campaign** button when `link` contains a valid HTTP(S) URL. That button opens the external destination in a new tab. A blank or invalid link shows a coming-soon note. Each candidate needs a unique `id`; photos belong in `public/images/`.
 
 ## Campaign content and theme image
 
@@ -72,7 +76,7 @@ All candidate names, positions, statements, portraits, destination links, and th
 - The candidate carousel rotates automatically. Hovering over the cards or focusing a carousel control temporarily holds the selected candidate; cycling resumes when that interaction ends.
 - **View as list** opens a readable directory of all candidates.
 - The bottom **Campaign hub** replaces the form. Its actions open the candidate directory, scroll to the vision, and reopen the navigation guide.
-- The visible arena runs in cinematic mode with motion enabled, including behind the navigation guide. Rendering is suspended automatically while the arena is outside the viewport or the tab is hidden.
+- The visible arena keeps motion enabled, with an automatic lightweight or 3D background. Offscreen/hidden animations are suspended. The desktop scene uses one cached shadow map, an 84-person crowd, no live mirror or HDR postprocessing, and a capped render rate. Mobile CSS removes expensive blur/filter layers while retaining the floating cards and scene movement.
 
 ## Checks
 
@@ -80,8 +84,15 @@ All candidate names, positions, statements, portraits, destination links, and th
 npm test
 npm run check:render
 npm run build
+npm run check:production
 ```
 
-The checks cover circular navigation, candidate destinations, campus and skyline placement, homepage rendering, and built-in profile rendering. Rendering checks also verify the academic fallback theme, the campaign hub with no form, the detail-page-first navigation and external campaign button, that stored candidate overrides cannot replace campaign content, and that editing controls are absent. They do not replace visual verification in a WebGL-capable browser.
+The checks cover circular navigation, candidate destinations, campus and skyline placement, device selection, SEO metadata and canonical handling, homepage rendering, and built-in profile rendering. The production build generates complete HTML and verifies that the 3D engine is not an initial import. Rendering checks also verify the academic fallback theme, the campaign hub with no form, the detail-page-first navigation and external campaign button, that stored candidate overrides cannot replace campaign content, and that editing controls are absent. They do not replace visual verification in a WebGL-capable browser.
 
 The site has no interest form or collection of visitor contact details. The audience is a procedural virtual crowd, not a representation of real endorsements. Replace the illustrative campaign copy before real-world use.
+
+## Performance and search deployment
+
+`npm run build` now creates complete HTML for the homepage, every candidate page, and the 404 page. It also creates `robots.txt` and a canonical sitemap for `https://mamudajohn.com/`, with titles, descriptions, social sharing tags, and JSON-LD. Identical copied templates consolidate to one canonical profile; unconfigured slots are not indexed.
+
+See [CLOUDFLARE-DEPLOY.md](CLOUDFLARE-DEPLOY.md) for Cloudflare build settings and Google Search Console steps. These source changes do not publish themselves or guarantee a Google listing. No Google verification token or Cloudflare account credential is stored in the project.
