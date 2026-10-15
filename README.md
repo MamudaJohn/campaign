@@ -50,20 +50,20 @@ Each candidate accepts:
 
 A filled `link` opens that destination. An empty link opens the built-in profile at `?candidate=candidate-id`. Add image files to `public/images/`. John Mamuda and ICT Director are taken from the existing page title; the remaining entries are explicitly empty candidate slots, with no invented candidates or endorsements.
 
-## Theme image and Scene Studio
+## Campaign content and theme image
 
 Set `campaign.themeImage` to `/images/theme.png` to scatter that image throughout the scene and use it in the brand mark. Designed emblem placeholders appear until it is supplied.
 
-**Scene studio** previews candidate names, positions, descriptions, portraits, destination links, and recurring theme artwork. Studio uploads accept JPG, PNG, WebP, or GIF up to 1.5 MB each. Edits are stored only in the current browser. To make changes visible to all visitors, update the source configuration and rebuild. If browser storage is full, changes remain available for the current visit with an explanatory message.
+All candidate names, positions, statements, portraits, destination links, and theme artwork are read directly from `src/data/campaign.js`. Visitors cannot edit candidate profiles. To publish a change, edit that file and rebuild the site. Previously saved browser overrides are ignored.
 
 ## Navigation
 
-- The first-visit popup has four short navigation steps. The fixed **Navigation guide** button reopens it at any time.
+- The first-visit popup has short navigation steps. The fixed **Navigation guide** button reopens it at any time.
 - Swipe/drag the stage, use the arrow buttons, or use Left/Right when the stage is focused. Home/End selects the first/last candidate.
 - Tap a side card to bring it forward; tap the front card to open its profile or campaign URL.
 - **AUTO** pauses or resumes carousel rotation. Interaction pauses automatic cycling so links are easier to select.
 - **View as list** opens a readable directory of all candidates.
-- **Motion** pauses the animated scene and CSS motion. OS reduced-motion settings are respected. Animation stops when the arena is out of view, the tab is hidden, or a guide/studio overlay is open.
+- **Motion** pauses the animated scene and CSS motion. OS reduced-motion settings are respected. Animation stops when the arena is out of view, the tab is hidden, or an overlay is open.
 
 ## Checks
 
@@ -73,6 +73,6 @@ npm run check:render
 npm run build
 ```
 
-The checks cover circular navigation, candidate destinations, image slots, saved configuration, homepage rendering, and built-in profile rendering. They do not replace visual verification in a WebGL-capable browser.
+The checks cover circular navigation, candidate destinations, city layout, homepage rendering, and built-in profile rendering. Rendering checks also verify that stored candidate overrides cannot replace campaign content and that editing controls are absent. They do not replace visual verification in a WebGL-capable browser.
 
 The interest form saves details only on the visitor's device. It does not send email or submit to a campaign. The audience is a procedural virtual crowd, not a representation of real endorsements. Replace the illustrative campaign copy before real-world use.

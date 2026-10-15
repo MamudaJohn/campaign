@@ -8,4 +8,4 @@ Add your own artwork here. Example paths:
 
 Set these paths in `src/data/campaign.js`. Empty image fields show a designed placeholder, so the site works before photographs or theme artwork are supplied.
 
-You can also try images in **Scene studio**. Studio edits are stored only in the current browser; source configuration is used for every other visitor.
+Candidate portraits and recurring theme artwork are configured only in `src/data/campaign.js`. Visitors cannot change them through the website.
