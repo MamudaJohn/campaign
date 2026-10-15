@@ -9,10 +9,14 @@ export function relativePosition(index, active, length) {
 }
 
 export function candidateDestination(candidate) {
-  const fallback = `?candidate=${encodeURIComponent(candidate.id)}`;
-  if (!candidate.link?.trim()) return fallback;
+  return `?candidate=${encodeURIComponent(candidate.id)}`;
+}
+
+// External destinations are available only from the candidate's detail page.
+export function candidateCampaignLink(candidate) {
+  if (!candidate.link?.trim()) return '';
   try {
-    const url = new URL(candidate.link);
-    return ['https:', 'http:'].includes(url.protocol) ? url.href : fallback;
-  } catch { return fallback; }
+    const url = new URL(candidate.link.trim());
+    return ['https:', 'http:'].includes(url.protocol) ? url.href : '';
+  } catch { return ''; }
 }

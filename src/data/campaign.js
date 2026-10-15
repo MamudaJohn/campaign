@@ -17,7 +17,7 @@ export const campaign = {
       "configured": true
     },
     {
-      "id": "john-mamuda",
+      "id": "john-mamuda-2",
       "name": "John Mamuda",
       "position": "ICT Director",
       "statement": "Meet the candidate MAMUDA JOHN. He said leadership is not just about promises, it is about results, real innovation and proven tech expertise. He said that he is ready to bring faster and smarter access to all study materials, hands-on tech bootcamps to build real-world skills and next-level digital infrastucture built by winners for students. Be part of what comes next in RUNACOS. ",
@@ -28,7 +28,7 @@ export const campaign = {
       "configured": true
     },
     {
-      "id": "john-mamuda",
+      "id": "john-mamuda-3",
       "name": "John Mamuda",
       "position": "ICT Director",
       "statement": "Meet the candidate MAMUDA JOHN. He said leadership is not just about promises, it is about results, real innovation and proven tech expertise. He said that he is ready to bring faster and smarter access to all study materials, hands-on tech bootcamps to build real-world skills and next-level digital infrastucture built by winners for students. Be part of what comes next in RUNACOS. ",
@@ -39,7 +39,7 @@ export const campaign = {
       "configured": true
     },
     {
-      "id": "john-mamuda",
+      "id": "john-mamuda-4",
       "name": "John Mamuda",
       "position": "ICT Director",
       "statement": "Meet the candidate MAMUDA JOHN. He said leadership is not just about promises, it is about results, real innovation and proven tech expertise. He said that he is ready to bring faster and smarter access to all study materials, hands-on tech bootcamps to build real-world skills and next-level digital infrastucture built by winners for students. Be part of what comes next in RUNACOS. ",
@@ -50,7 +50,7 @@ export const campaign = {
       "configured": true
     },
     {
-      "id": "john-mamuda",
+      "id": "john-mamuda-5",
       "name": "John Mamuda",
       "position": "ICT Director",
       "statement": "Meet the candidate MAMUDA JOHN. He said leadership is not just about promises, it is about results, real innovation and proven tech expertise. He said that he is ready to bring faster and smarter access to all study materials, hands-on tech bootcamps to build real-world skills and next-level digital infrastucture built by winners for students. Be part of what comes next in RUNACOS. ",

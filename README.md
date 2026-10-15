@@ -32,9 +32,10 @@ Use `npm.cmd` on PowerShell systems that block `npm.ps1`. Deploy the generated `
 ## Candidate templates (separate JSX files)
 
 - `src/components/CandidateCarousel.jsx`: independent carousel with automatic rotation, previous/next controls, portrait thumbnail selectors, swipe/drag gestures, and keyboard navigation.
-- `src/components/CandidateCard.jsx`: the reusable floating slide template. Its portrait, name, position, statement, and entire clickable link can be changed through candidate data.
+- `src/components/CandidateCard.jsx`: the reusable floating slide template. Its portrait, name, position, and statement come from candidate data. The entire card opens the internal detail page.
 - `src/components/CarouselDock.jsx`: animated orbital lights, suspension rings, and the floating platform around the cards.
 - `src/components/CandidatePortrait.jsx`: portrait renderer with a designed fallback while photos are missing.
+- `src/components/CampaignHub.jsx`: the bottom campaign hub, with working actions for the candidate directory, vision, and navigation guide.
 - `src/data/campaign.js`: permanent candidate content and recurring theme image. This is the file to edit when you are ready to add the real names, details, portraits, and links.
 
 On phones, cards use a larger stacked layout with 60% of their height reserved for the photograph. Framing and edge details give the display more depth while keeping the portrait clear.
@@ -55,7 +56,7 @@ Each candidate accepts:
 }
 ```
 
-A filled `link` opens that destination. An empty link opens the built-in profile at `?candidate=candidate-id`. Add image files to `public/images/`. John Mamuda and ICT Director are taken from the existing page title; the remaining entries are explicitly empty candidate slots, with no invented candidates or endorsements.
+Every card and directory entry opens the built-in detail page at `?candidate=candidate-id`. The detail page shows the full statement and details, followed by an **Explore campaign** button when `link` contains a valid HTTP(S) URL. That button opens the external destination in a new tab. A blank or invalid link shows a coming-soon note. Each candidate needs a unique `id`; photos belong in `public/images/`.
 
 ## Campaign content and theme image
 
@@ -67,9 +68,10 @@ All candidate names, positions, statements, portraits, destination links, and th
 
 - The first-visit popup has short navigation steps. The fixed **Navigation guide** button reopens it at any time.
 - Swipe/drag the stage, use the arrow buttons, or use Left/Right when the stage is focused. Home/End selects the first/last candidate.
-- Tap a side card to bring it forward; tap the front card to open its profile or campaign URL.
+- Tap a side card to bring it forward; tap the front card to read the candidate details. Use **Explore campaign** on that page to open the external link.
 - The candidate carousel rotates automatically. Hovering over the cards or focusing a carousel control temporarily holds the selected candidate; cycling resumes when that interaction ends.
 - **View as list** opens a readable directory of all candidates.
+- The bottom **Campaign hub** replaces the form. Its actions open the candidate directory, scroll to the vision, and reopen the navigation guide.
 - The visible arena runs in cinematic mode with motion enabled, including behind the navigation guide. Rendering is suspended automatically while the arena is outside the viewport or the tab is hidden.
 
 ## Checks
@@ -80,6 +82,6 @@ npm run check:render
 npm run build
 ```
 
-The checks cover circular navigation, candidate destinations, campus and skyline placement, homepage rendering, and built-in profile rendering. Rendering checks also verify the academic fallback theme, that stored candidate overrides cannot replace campaign content and that editing controls are absent. They do not replace visual verification in a WebGL-capable browser.
+The checks cover circular navigation, candidate destinations, campus and skyline placement, homepage rendering, and built-in profile rendering. Rendering checks also verify the academic fallback theme, the campaign hub with no form, the detail-page-first navigation and external campaign button, that stored candidate overrides cannot replace campaign content, and that editing controls are absent. They do not replace visual verification in a WebGL-capable browser.
 
-The interest form saves details only on the visitor's device. It does not send email or submit to a campaign. The audience is a procedural virtual crowd, not a representation of real endorsements. Replace the illustrative campaign copy before real-world use.
+The site has no interest form or collection of visitor contact details. The audience is a procedural virtual crowd, not a representation of real endorsements. Replace the illustrative campaign copy before real-world use.

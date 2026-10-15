@@ -1,8 +1,9 @@
 import React, { Component, Suspense, lazy, useEffect, useRef, useState } from 'react';
 import { campaign } from './data/campaign';
-import { candidateDestination } from './lib/arena.mjs';
+import { candidateDestination, candidateCampaignLink } from './lib/arena.mjs';
 import './arena.css';
 import CandidateCarousel from './components/CandidateCarousel.jsx';
+import CampaignHub from './components/CampaignHub.jsx';
 import Portrait from './components/CandidatePortrait.jsx';
 import CampusFallback from './components/CampusFallback.jsx';
 import AcademicMotifs from './components/AcademicMotifs.jsx';
@@ -40,7 +41,7 @@ function Modal({ title, className = '', children, onClose }) {
 const guideSteps = [
   { index: '01', title: 'Welcome to a new dimension.', text: 'The candidate stage floats above a connected university, with learning labs, floating ideas, and a future city on the horizon. Follow the light, rotate the line-up, and find the voices shaping what comes next.', hint: 'YOUR FIRST MISSION: EXPLORE THE STAGE', symbol: '✧' },
   { index: '02', title: 'Take the line-up for a spin.', text: 'Swipe or drag the cards left and right. You can also use the on-screen arrows, portrait thumbnails, or your keyboard’s left and right arrow keys while the stage is focused.', hint: 'SWIPE  ↔  /  ARROW KEYS  ← →', symbol: '↔' },
-  { index: '03', title: 'Step into a candidate’s world.', text: 'Tap a side card to bring it forward. Tap the large front card to open that candidate’s profile or connected campaign link. Use “View as list” to see every candidate together.', hint: 'BRING FORWARD → TAP TO OPEN', symbol: '↗' },
+  { index: '03', title: 'Step into a candidate’s world.', text: 'Tap a side card to bring it forward. Tap the large front card to open that candidate’s detail page. The campaign button on that page opens their external link. Use “View as list” to see every candidate together.', hint: 'BRING FORWARD → TAP TO OPEN', symbol: '↗' },
 ];
 
 function NavigationGuide({ onClose }) {
@@ -87,7 +88,8 @@ function CandidateDirectory({ candidates, onClose }) {
     </Modal>;
 }
 
-function CandidateProfile({ candidate, config }) {
+export function CandidateProfile({ candidate, config }) {
+  const campaignLink = candidateCampaignLink(candidate);
   return <div className="experience profile-experience" data-motion="on" data-quality="cinematic">
     <div className="space-grain"/>
     <header className="space-header">
@@ -111,7 +113,7 @@ function CandidateProfile({ candidate, config }) {
         <p className="profile-statement">{candidate.statement}</p>
         <p className="profile-detail">{candidate.detail}</p>
         {!candidate.image && <p className="profile-note">Candidate portrait coming soon.</p>}
-        <a className="gold-button" href="./#join">Be part of what’s next <Arrow/></a>
+        {campaignLink ? <a className="gold-button" href={campaignLink} target="_blank" rel="noopener noreferrer" aria-label="Explore campaign (opens in a new tab)">Explore campaign <Arrow/></a> : <p className="profile-note">Campaign link coming soon.</p>}
         <a className="back-link" href="./">← Return to the revolving stage</a>
       </div>
     </main>
@@ -120,17 +122,6 @@ function CandidateProfile({ candidate, config }) {
       <span>Candidate details supplied by the campaign · Empty slots are placeholders</span>
     </footer>
   </div>;
-}
-
-function JoinForm() {
-  const [joined, setJoined] = useState(false), [notice, setNotice] = useState('');
-  function submit(event) {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    try { localStorage.setItem('start-over-interest', JSON.stringify(Object.fromEntries(data))); setJoined(true); setNotice(''); }
-    catch { setNotice('Your browser could not save your details. Please try again with local storage enabled.'); }
-  }
-  return <div className="join-console">{joined ? <div className="joined-state" role="status"><span aria-hidden="true">✳</span><h3>You’re part of the idea.</h3><p>Your interest is saved on this device. </p><button className="outline-button" onClick={() => setJoined(false)}>Update details</button><button className="quiet-button" onClick={() => { try { localStorage.removeItem('start-over-interest'); setJoined(false); setNotice('Saved details removed.'); } catch { setNotice('The saved details could not be removed.'); } }}>Remove saved details</button></div> : <form onSubmit={submit}><p className="eyebrow">OPEN CHANNEL / GET INVOLVED</p><h3>Every movement<br/>starts with a hello.</h3><label className="field">Your name<input required name="name" autoComplete="name" placeholder="First and last name" maxLength={100}/></label><label className="field">Email address<input required type="email" name="email" autoComplete="email" placeholder="you@example.com" maxLength={254}/></label><label className="field">I’d like to<select name="interest"><option>Stay in the loop</option><option>Volunteer my time</option><option>Join a community event</option><option>Share an idea</option></select></label><label className="check"><input required type="checkbox"/> Save my details on this device.</label><button className="gold-button" type="submit">Count me in <Arrow/></button><p className="form-note">Demo form. Details stay in this browser and are never sent to a server.</p></form>}<p className="form-note" role="status">{notice}</p></div>;
 }
 
 export default function Experience() {
@@ -170,7 +161,7 @@ export default function Experience() {
       <nav aria-label="Main navigation">
         <a href="#candidate-stage">The line-up</a>
         <a href="#vision">The vision</a>
-        <a href="#join">Get involved <Arrow/></a>
+        <a href="#explore">Campaign hub <Arrow/></a>
       </nav>
 </header>
     <main>
@@ -231,8 +222,17 @@ export default function Experience() {
         ['01', 'Opportunity, closer to home.', 'Practical skills, new connections, and a fair chance to build something that matters.', '↗'],
         ['02', 'Everyday life, made better.', 'Welcoming shared spaces, reliable support, and a community shaped around its people.', '⌘'],
         ['03', 'A future we can grow into.', 'Thoughtful choices today. Stronger foundations for everyone who comes next.', '✳'],
-      ].map(([number, title, text, icon], index) => <article className="glass-panel possibility" key={number} style={{ '--delay': `${index * -2}s` }}><div className="possibility-top"><span>IDEA / {number}</span><span aria-hidden="true">{icon}</span></div><h3>{title}</h3><p>{text}</p><a className="text-link" href="#join">Help shape this idea <Arrow/></a></article>)}</div></section>
-      <section id="join" className="join-world world-section"><div className="section-coordinate">03 / YOUR PLACE IN THIS WORLD</div><div className="join-heading"><p className="eyebrow">THE NEXT MOVE IS YOURS</p><h2>The future<br/>has room<br/>for <em>you.</em><span aria-hidden="true">↗</span></h2><p>Bring your energy. Bring your ideas.<br/>Let’s build something worth believing in.</p><div className="join-halo" aria-hidden="true"><i/><i/><i/></div></div><JoinForm/></section>
+      ].map(([number, title, text, icon], index) => <article className="glass-panel possibility" key={number} style={{ '--delay': `${index * -2}s` }}><div className="possibility-top"><span>IDEA / {number}</span><span aria-hidden="true">{icon}</span></div><h3>{title}</h3><p>{text}</p><a className="text-link" href="#explore">Explore the campaign <Arrow/></a></article>)}</div></section>
+      <section id="explore" className="hub-world world-section" aria-labelledby="campaign-hub-heading">
+        <div className="section-coordinate">03 / THE CAMPAIGN HUB</div>
+        <div className="hub-heading">
+          <p className="eyebrow">THE NEXT MOVE IS YOURS</p>
+          <h2 id="campaign-hub-heading">Your next<br/>move starts<br/><em>here.</em><span aria-hidden="true">↗</span></h2>
+          <p>Get to know the candidates.<br/>Explore the people and ideas shaping what comes next.</p>
+          <div className="hub-halo" aria-hidden="true"><i/><i/><i/></div>
+        </div>
+        <CampaignHub count={config.candidates.length} onBrowse={() => setOverlay('directory')} onGuide={() => setOverlay('guide')}/>
+      </section>
     </main>
     <footer className="space-footer"><a className="space-brand" href="#"><Emblem image={config.themeImage}/><span>UPGRADE<small>RUNACOS</small></span></a><p>A future worth building. Together.</p><span>© {new Date().getFullYear()} · Candidate showcase concept</span><a href="#">BACK TO ORBIT ↑</a></footer>
     <button className="guide-trigger" onClick={() => setOverlay('guide')} aria-label="Open navigation guide"><span>?</span><span>NAVIGATION GUIDE</span></button>

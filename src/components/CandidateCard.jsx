@@ -4,7 +4,7 @@ import { candidateDestination } from '../lib/arena.mjs';
 
 // Reusable suspended slide template. Content comes from src/data/campaign.js.
 // candidate: { id, name, position, statement, image, link, initials, configured }
-// A populated `link` opens the supplied URL; a blank link opens the local profile.
+// Every card opens the local profile; its campaign button opens the supplied URL.
 export default function CandidateCard({ candidate, index, offset, onSelect }) {
   const distance = Math.abs(offset);
   return <div className={`candidate-orbiter ${offset === 0 ? 'is-front' : ''}`} data-away={distance > 1} style={{ '--offset': offset, '--distance': distance, '--float-delay': `${index * -1.7}s`, zIndex: 10 - distance }} aria-hidden={offset !== 0}>
@@ -17,7 +17,7 @@ export default function CandidateCard({ candidate, index, offset, onSelect }) {
         <p className="candidate-position">{candidate.position}</p>
         <h2>{candidate.name}</h2>
         <p className="candidate-statement">{candidate.statement}</p>
-        <span className="candidate-cta">{candidate.link ? 'Explore campaign' : 'Open candidate profile'} <span aria-hidden="true">↗</span></span>
+        <span className="candidate-cta">View candidate details <span aria-hidden="true">↗</span></span>
         <span className="candidate-edge" aria-hidden="true"/>
       </div>
       <span className="candidate-chassis" aria-hidden="true"><i/><i/><i/><i/></span>
