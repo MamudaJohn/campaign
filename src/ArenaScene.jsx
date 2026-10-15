@@ -1,89 +1,27 @@
 import React, { useMemo, useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Edges, Line } from '@react-three/drei';
+import { Edges } from '@react-three/drei';
 import * as THREE from 'three';
-import TechCity from './world/TechCity.jsx';
+import AcademicCampus from './world/AcademicCampus.jsx';
+import TechSkyline from './world/TechSkyline.jsx';
 import CinematicEffects from './world/CinematicEffects.jsx';
-import CityFallback from './components/CityFallback.jsx';
+import CampusFallback from './components/CampusFallback.jsx';
 
 const BLUE = '#387cff', GOLD = '#ffcf57', ICE = '#82dbff';
-const vertexShader = 'varying vec2 vUv; void main(){vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}';
-const fragmentShader = `varying vec2 vUv; uniform float time;
-void main(){ vec2 p=vUv-.5; float r=length(p); float halo=exp(-pow((r-.33)*22.,2.))*.24;
-float glow=exp(-r*5.)*.1; float rays=pow(max(0.,sin(atan(p.y,p.x)*18.+time*.18)),16.)*exp(-pow((r-.33)*16.,2.))*.12;
-gl_FragColor=vec4(.12,.36,1.,halo+glow+rays); }`;
-
 function CameraRig({ pointer, motion }) {
   useFrame(({ camera }) => {
-    const x = motion ? pointer.current.x * .45 : 0;
+    const x = motion ? pointer.current.x * .2 : 0;
     camera.position.x = THREE.MathUtils.lerp(camera.position.x, x, .025);
     camera.lookAt(0, 3.4, -1);
   });
   return null;
 }
 
-function Portal({ motion }) {
-  const rings = useRef(), shader = useRef(), time = useRef(0);
-  const arc = useMemo(() => Array.from({ length: 80 }, (_, index) => { const angle = index / 79 * Math.PI * 1.15; return [Math.cos(angle) * 4.4, Math.sin(angle) * 4.4, 0]; }), []);
-  useFrame((_, delta) => { if (!motion) return; time.current += Math.min(delta, .05); if (rings.current) rings.current.rotation.z = time.current * .035; if (shader.current) shader.current.uniforms.time.value = time.current; });
-  return <group position={[0, 3.2, -7]}>
-    <mesh position={[0, 0, -.2]}>
-      <planeGeometry args={[16, 16]}/>
-      <shaderMaterial ref={shader} vertexShader={vertexShader} fragmentShader={fragmentShader} uniforms={useMemo(() => (
-        { time: { value: 0 } }
-        ), [])
-        } transparent depthWrite={false} blending={THREE.AdditiveBlending}/>
-    </mesh>
-    <group ref={rings}>
-      <mesh>
-        <torusGeometry args={[4.35, .018, 6, 180]}/>
-        <meshBasicMaterial color={BLUE}/>
-      </mesh>
-      <mesh>
-        <torusGeometry args={[3.95, .008, 5, 140]}/>
-        <meshBasicMaterial color={ICE} transparent opacity={.4}/>
-      </mesh>
-      <Line points={arc} color={GOLD} lineWidth={2}/>{
-      Array.from({ length: 36 }, (_, index) => { const angle = index * Math.PI / 18; return (
-      <mesh key={index} position={[Math.cos(angle) * 4.65, Math.sin(angle) * 4.65, 0]} rotation={[0, 0, angle]}>
-        <boxGeometry args={[index % 3 === 0 ? .2 : .08, .025, .025]}/>
-        <meshBasicMaterial color={index % 3 === 0 ? GOLD : BLUE}/>
-      </mesh>) 
-    })}
-    </group>
-  </group>;
-}
-
-function FloatingObject({ index, motion }) {
-  const ref = useRef(), time = useRef(index * 1.7);
-  useFrame((_, delta) => {
-    if (motion) time.current += Math.min(delta, .05) * (.3 + index % 3 * .07);
-    const t = time.current;
-    ref.current.position.set(Math.sin(t * .45 + index) * (6 + index % 3), 2.8 + Math.sin(t * .7 + index * 2) * 3, -2 - (index % 4) * 1.4 + Math.cos(t * .4));
-    ref.current.rotation.set(t * .23, t * .35, t * .18);
-  });
-  return <group ref={ref} scale={index % 3 === 0 ? .43 : .19}>
-    <mesh castShadow receiveShadow>{index % 2 === 0 ? (
-      <octahedronGeometry/> ): (
-      <boxGeometry args={[1, 1, 1]}/>)
-      }
-      <meshPhysicalMaterial color={index % 2 === 0 ? '#c9a35d' : '#132752'} metalness={.8} roughness={.2} clearcoat={.8} emissive={index % 2 === 0 ? '#332105' : BLUE} emissiveIntensity={.12}/>
-      <Edges color={index % 2 === 0 ? '#02040a' : BLUE} lineWidth={1.5}/>
-    </mesh>
-    {index % 3 === 0 && (
-      <mesh rotation={[Math.PI / 3, .3, 0]}>
-      <torusGeometry args={[1.55, .025, 6, 48]}/>
-      <meshBasicMaterial color={ICE}/>
-      </mesh>
-    )}
-  </group>;
-}
-
 function StarField({ motion }) {
   const ref = useRef();
   const points = useMemo(() => {
-    const positions = new Float32Array(350 * 3);
-    for (let index = 0; index < 350; index++) { const seed = Math.sin(index * 127.1 + 311.7) * 43758.5453; const value = seed - Math.floor(seed); positions[index * 3] = Math.cos(index * 2.399) * (4 + value * 15); positions[index * 3 + 1] = Math.sin(index * 2.399) * 10 + 3; positions[index * 3 + 2] = -3 - value * 20; }
+    const positions = new Float32Array(90 * 3);
+    for (let index = 0; index < 90; index++) { const seed = Math.sin(index * 127.1 + 311.7) * 43758.5453; const value = seed - Math.floor(seed); positions[index * 3] = Math.cos(index * 2.399) * (4 + value * 15); positions[index * 3 + 1] = Math.sin(index * 2.399) * 10 + 3; positions[index * 3 + 2] = -3 - value * 20; }
     return positions;
   }, []);
   useFrame((_, delta) => { if (motion) ref.current.rotation.z += Math.min(delta, .05) * .007; });
@@ -92,7 +30,7 @@ function StarField({ motion }) {
     <bufferGeometry>
       <bufferAttribute attach="attributes-position" args={[points, 3]}/>
     </bufferGeometry>
-    <pointsMaterial color={ICE} size={.032} transparent opacity={.8} depthWrite={false}/>
+    <pointsMaterial color={ICE} size={.018} transparent opacity={.25} depthWrite={false}/>
   </points>
   );
 }
@@ -154,12 +92,12 @@ function Audience({ motion }) {
 
 export default function ArenaScene({ motion, pointer, quality = 'cinematic' }) {
   const cinematic = quality === 'cinematic';
-  return <Canvas shadows={{ type: THREE.PCFSoftShadowMap }} frameloop={motion ? 'always' : 'demand'} dpr={[1, cinematic ? 1.4 : 1]} camera={{ position: [0, 4.3, 16.5], fov: 46, near: .2, far: 180 }} gl={{ antialias: true, alpha: false, powerPreference: 'high-performance', toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.05 }} fallback={<CityFallback/>}>
-    <color attach="background" args={['#050a15']}/><fogExp2 attach="fog" args={['#0b1528', .016]}/><ambientLight intensity={.16}/><hemisphereLight args={['#abc8ed', '#0d1520', .4]}/>
-    <directionalLight key={quality} position={[-8, 22, 10]} color="#c2d8ff" intensity={2.2} castShadow shadow-mapSize-width={cinematic ? 2048 : 1024} shadow-mapSize-height={cinematic ? 2048 : 1024} shadow-camera-left={-22} shadow-camera-right={22} shadow-camera-top={22} shadow-camera-bottom={-22} shadow-camera-near={.5} shadow-camera-far={80} shadow-bias={-.00015} shadow-normalBias={.025} shadow-radius={3}/>
-    <spotLight position={[5, 12, 5]} color="#ffe0a3" intensity={160} angle={.5} penumbra={.8} distance={45} decay={2} castShadow={cinematic} shadow-mapSize-width={1024} shadow-mapSize-height={1024} shadow-bias={-.0002}/>
-    <pointLight position={[-5, 4, 4]} color={BLUE} intensity={24}/><pointLight position={[5, 5, 3]} color={GOLD} intensity={20}/>
-    <CameraRig pointer={pointer} motion={motion}/><TechCity motion={motion} cinematic={cinematic}/><StarField motion={motion}/><Portal motion={motion}/><LevitationStage motion={motion}/><Audience motion={motion}/>{Array.from({ length: 12 }, (_, index) => <FloatingObject key={index} index={index} motion={motion}/>)}
+  return <Canvas shadows={{ type: THREE.PCFSoftShadowMap }} frameloop={motion ? 'always' : 'demand'} dpr={[1, cinematic ? 1.4 : 1]} camera={{ position: [0, 4.3, 16.5], fov: 46, near: .2, far: 180 }} gl={{ antialias: true, alpha: false, powerPreference: 'high-performance', toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.05 }} fallback={<CampusFallback/>}>
+    <color attach="background" args={['#080f1b']}/><fogExp2 attach="fog" args={['#101c2b', .0095]}/><ambientLight intensity={.2}/><hemisphereLight args={['#abc8ed', '#14202a', .55]}/>
+    <directionalLight key={quality} position={[-8, 22, 10]} color="#c2d8ff" intensity={1.5} castShadow shadow-mapSize-width={cinematic ? 2048 : 1024} shadow-mapSize-height={cinematic ? 2048 : 1024} shadow-camera-left={-22} shadow-camera-right={22} shadow-camera-top={22} shadow-camera-bottom={-22} shadow-camera-near={.5} shadow-camera-far={80} shadow-bias={-.00015} shadow-normalBias={.025} shadow-radius={3}/>
+    <spotLight position={[5, 12, 5]} color="#ffe0a3" intensity={85} angle={.5} penumbra={.8} distance={45} decay={2} castShadow={cinematic} shadow-mapSize-width={1024} shadow-mapSize-height={1024} shadow-bias={-.0002}/>
+    <pointLight position={[-5, 4, 4]} color={BLUE} intensity={14}/><pointLight position={[5, 5, 3]} color={GOLD} intensity={12}/>
+    <CameraRig pointer={pointer} motion={motion}/><TechSkyline motion={motion}/><AcademicCampus motion={motion} cinematic={cinematic}/><StarField motion={motion}/><LevitationStage motion={motion}/><Audience motion={motion}/>
     {cinematic && <CinematicEffects/>}
   </Canvas>;
 }

@@ -13,6 +13,7 @@ const directory = path.join(root, '.verification');
 await mkdir(directory, { recursive: true });
 const output = path.join(directory, `experience-${Date.now()}.mjs`);
 const previousStorage = Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
+const previousMatchMedia = Object.getOwnPropertyDescriptor(globalThis, 'matchMedia');
 const primary = campaign.candidates[0];
 const text = value => renderToStaticMarkup(React.createElement('span', null, value)).slice(6, -7);
 try {
@@ -23,16 +24,28 @@ try {
   assert.ok(home.includes(text(primary.name)));
   assert.match(home, /Navigation guide/);
   assert.doesNotMatch(home, /Scene studio|Choose candidate portrait|type="file"/);
-  assert.match(home, /Visual quality: cinematic/);
-  assert.match(home, /fallback-buildings/);
+  assert.match(home, /data-motion="on" data-quality="cinematic"/);
+  assert.doesNotMatch(home, /quality-button|motion-button|rotation-control|Pause all animations|Play animations|Switch to balanced/);
+  assert.match(home, /campus-fallback/);
+  assert.match(home, /campus-skyline/);
+  assert.match(home, /campus-connections/);
+  assert.match(home, /CONNECTED KNOWLEDGE|curiosity\.connect/);
+  assert.match(home, /LEARN\. BUILD\. DISCOVER\./);
+  assert.doesNotMatch(home, /fallback-buildings|city-fallback/);
   assert.match(home, /VIRTUAL AUDIENCE/);
+  assert.match(home, /class="carousel-dock"/);
+  assert.equal((home.match(/class="candidate-thumbnail"/g) || []).length, campaign.candidates.length);
+  const portraitGradients = [...home.matchAll(/id="(figure-[^"]+)"/g)].map(match => match[1]);
+  assert.equal(new Set(portraitGradients).size, portraitGradients.length, 'Repeated portraits need unique SVG gradient IDs');
   assert.equal((home.match(/class="candidate-card"/g) || []).length, campaign.candidates.length);
   assert.ok(home.includes(`href="${text(candidateDestination(primary))}"`));
   const legacyOverride = JSON.stringify({ ...campaign, candidates: [{ ...primary, name: 'BROWSER_PROFILE_OVERRIDE', image: 'https://example.com/browser-portrait.jpg', link: 'https://example.com/browser-campaign' }] });
-  Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: { getItem: key => key === 'runacos-space-studio-v1' ? legacyOverride : null } });
+  Object.defineProperty(globalThis, 'localStorage', { configurable: true, value: { getItem: key => key === 'runacos-space-studio-v1' ? legacyOverride : key === 'runacos-visual-quality' ? 'balanced' : null } });
+  Object.defineProperty(globalThis, 'matchMedia', { configurable: true, value: () => ({ matches: true }) });
   const homeWithStoredEdits = renderToString(React.createElement(Experience));
   assert.ok(homeWithStoredEdits.includes(text(primary.name)));
   assert.doesNotMatch(homeWithStoredEdits, /BROWSER_PROFILE_OVERRIDE|browser-portrait\.jpg|browser-campaign/);
+  assert.match(homeWithStoredEdits, /data-motion="on" data-quality="cinematic"/);
   globalThis.location = { search: `?candidate=${encodeURIComponent(primary.id)}` };
   const profile = renderToString(React.createElement(Experience));
   assert.match(profile, /CANDIDATE PROFILE/);
@@ -42,10 +55,13 @@ try {
   assert.match(profile, /Return to the revolving stage/);
   assert.doesNotMatch(profile, /class="candidate-card"/);
   assert.doesNotMatch(profile, /BROWSER_PROFILE_OVERRIDE|browser-portrait\.jpg|browser-campaign|<input|<textarea|Scene studio/);
-  console.log('Campaign-authored cards and profiles render correctly; visitor editing is absent and legacy browser overrides are ignored.');
+  assert.match(profile, /data-motion="on" data-quality="cinematic"/);
+  console.log('Cinematic rendering and motion are enabled without off controls; campaign profiles ignore legacy browser overrides.');
 } finally {
   delete globalThis.location;
   if (previousStorage) Object.defineProperty(globalThis, 'localStorage', previousStorage);
   else delete globalThis.localStorage;
+  if (previousMatchMedia) Object.defineProperty(globalThis, 'matchMedia', previousMatchMedia);
+  else delete globalThis.matchMedia;
   await unlink(output).catch(() => {});
 }

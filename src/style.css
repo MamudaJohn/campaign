@@ -30,7 +30,7 @@ h1, h2, h3 { font-family: 'Manrope', sans-serif; }
 .header::after { content: ''; position: absolute; left: 6%; right: 6%; bottom: 0; height: 1px; background: linear-gradient(90deg, var(--gold), #357fff70 45%, transparent); }
 .brand { display: flex; align-items: center; gap: 11px; font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 29px; letter-spacing: -1.6px; line-height: 1; white-space: nowrap; }
 .brand-mark { display: grid; place-items: center; background: var(--gold); color: #050810; width: 37px; height: 39px; border: 2px solid #000; box-shadow: 3px 3px 0 #3066ba; font-size: 35px; }
-.brand small { display: block; font: 7px var(--mono); letter-spacing: 1.1px; color: var(--muted); margin-top: 9px; }
+.brand small { display: block; font: 15px var(--mono); letter-spacing: 1.1px; color: var(--muted); margin-top: 9px; }
 .header nav { display: flex; align-items: center; gap: 29px; font-size: 12px; }
 .header nav>a:not(.button) { transition: color .2s; }
 .header nav>a:hover { color: var(--gold); }

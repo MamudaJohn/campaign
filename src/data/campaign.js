@@ -3,62 +3,63 @@
 export const campaign = {
   "name": "Upgrade RUNACOS",
   "tagline": "A future worth building. Together.",
-  "themeImage": "public/images/RUNACOSIMG.jpg",
+  "themeImage": "/images/RUNACOSIMG.jpg",
   "candidates": [
     {
       "id": "john-mamuda",
       "name": "John Mamuda",
       "position": "ICT Director",
-      "statement": "Meet the candidate. Explore the vision. Be part of what comes next.",
+      "statement": "Meet the candidate MAMUDA JOHN. He said leadership is not just about promises, it is about results, real innovation and proven tech expertise. He said that he is ready to bring faster and smarter access to all study materials, hands-on tech bootcamps to build real-world skills and next-level digital infrastucture built by winners for students. Be part of what comes next in RUNACOS. ",
       "detail": "The full candidate statement and campaign details will be added here.",
-      "image": "",
-      "link": "",
+      "image": "/images/JohnMamuda.jpg",
+      "link": "https://chat.whatsapp.com/K7xjicwKwaq4GPpQAUtuyf?s=cl&p=a&mlu=4&ilr=4",
       "initials": "JM",
       "configured": true
     },
     {
-      "id": "candidate-2",
-      "name": "Candidate slot 02",
-      "position": "Position to be announced",
-      "statement": "A space for the next voice. Candidate details and portrait will appear here.",
-      "detail": "This is an empty candidate slot, ready for a name, position, photograph, statement, and destination link.",
-      "image": "",
-      "link": "",
-      "initials": "02",
-      "configured": false
+      "id": "john-mamuda",
+      "name": "John Mamuda",
+      "position": "ICT Director",
+      "statement": "Meet the candidate MAMUDA JOHN. He said leadership is not just about promises, it is about results, real innovation and proven tech expertise. He said that he is ready to bring faster and smarter access to all study materials, hands-on tech bootcamps to build real-world skills and next-level digital infrastucture built by winners for students. Be part of what comes next in RUNACOS. ",
+      "detail": "The full candidate statement and campaign details will be added here.",
+      "image": "/images/JohnMamuda.jpg",
+      "link": "https://chat.whatsapp.com/K7xjicwKwaq4GPpQAUtuyf?s=cl&p=a&mlu=4&ilr=4",
+      "initials": "JM",
+      "configured": true
     },
     {
-      "id": "candidate-3",
-      "name": "Candidate slot 03",
-      "position": "Position to be announced",
-      "statement": "A space for the next voice. Candidate details and portrait will appear here.",
-      "detail": "This is an empty candidate slot, ready for a name, position, photograph, statement, and destination link.",
-      "image": "",
-      "link": "",
-      "initials": "03",
-      "configured": false
+      "id": "john-mamuda",
+      "name": "John Mamuda",
+      "position": "ICT Director",
+      "statement": "Meet the candidate MAMUDA JOHN. He said leadership is not just about promises, it is about results, real innovation and proven tech expertise. He said that he is ready to bring faster and smarter access to all study materials, hands-on tech bootcamps to build real-world skills and next-level digital infrastucture built by winners for students. Be part of what comes next in RUNACOS. ",
+      "detail": "The full candidate statement and campaign details will be added here.",
+      "image": "/images/JohnMamuda.jpg",
+      "link": "https://chat.whatsapp.com/K7xjicwKwaq4GPpQAUtuyf?s=cl&p=a&mlu=4&ilr=4",
+      "initials": "JM",
+      "configured": true
     },
     {
-      "id": "candidate-4",
-      "name": "Candidate slot 04",
-      "position": "Position to be announced",
-      "statement": "A space for the next voice. Candidate details and portrait will appear here.",
-      "detail": "This is an empty candidate slot, ready for a name, position, photograph, statement, and destination link.",
-      "image": "",
-      "link": "",
-      "initials": "04",
-      "configured": false
+      "id": "john-mamuda",
+      "name": "John Mamuda",
+      "position": "ICT Director",
+      "statement": "Meet the candidate MAMUDA JOHN. He said leadership is not just about promises, it is about results, real innovation and proven tech expertise. He said that he is ready to bring faster and smarter access to all study materials, hands-on tech bootcamps to build real-world skills and next-level digital infrastucture built by winners for students. Be part of what comes next in RUNACOS. ",
+      "detail": "The full candidate statement and campaign details will be added here.",
+      "image": "/images/JohnMamuda.jpg",
+      "link": "https://chat.whatsapp.com/K7xjicwKwaq4GPpQAUtuyf?s=cl&p=a&mlu=4&ilr=4",
+      "initials": "JM",
+      "configured": true
     },
     {
-      "id": "candidate-5",
-      "name": "Candidate slot 05",
-      "position": "Position to be announced",
-      "statement": "A space for the next voice. Candidate details and portrait will appear here.",
-      "detail": "This is an empty candidate slot, ready for a name, position, photograph, statement, and destination link.",
-      "image": "",
-      "link": "",
-      "initials": "05",
-      "configured": false
-    }
+      "id": "john-mamuda",
+      "name": "John Mamuda",
+      "position": "ICT Director",
+      "statement": "Meet the candidate MAMUDA JOHN. He said leadership is not just about promises, it is about results, real innovation and proven tech expertise. He said that he is ready to bring faster and smarter access to all study materials, hands-on tech bootcamps to build real-world skills and next-level digital infrastucture built by winners for students. Be part of what comes next in RUNACOS. ",
+      "detail": "The full candidate statement and campaign details will be added here.",
+      "image": "/images/JohnMamuda.jpg",
+      "link": "https://chat.whatsapp.com/K7xjicwKwaq4GPpQAUtuyf?s=cl&p=a&mlu=4&ilr=4",
+      "initials": "JM",
+      "configured": true
+    },
+    
   ]
 };

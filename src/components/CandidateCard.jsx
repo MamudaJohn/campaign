@@ -11,7 +11,7 @@ export default function CandidateCard({ candidate, index, offset, onSelect }) {
     <a className="candidate-card" href={candidateDestination(candidate)} tabIndex={offset === 0 ? 0 : -1} aria-label={`Open ${candidate.name}, ${candidate.position}`} draggable={false} onClick={event => {
       if (offset !== 0) { event.preventDefault(); onSelect(index); }
     }}>
-      <div className="candidate-portrait"><CandidatePortrait candidate={candidate}/><span className="portrait-caption">{candidate.configured ? 'CANDIDATE PROFILE' : 'OPEN CANDIDATE SLOT'}</span></div>
+      <div className="candidate-portrait"><CandidatePortrait candidate={candidate}/><span className="portrait-index" aria-hidden="true">{String(index + 1).padStart(2, '0')} / PROFILE</span><span className="portrait-caption">{candidate.configured ? 'CANDIDATE PROFILE' : 'OPEN CANDIDATE SLOT'}</span></div>
       <div className="candidate-copy">
         <div className="candidate-status"><span>{candidate.configured ? 'MEET YOUR CANDIDATE' : 'AWAITING DETAILS'}</span><span>[ {String(index + 1).padStart(2, '0')} ]</span></div>
         <p className="candidate-position">{candidate.position}</p>
@@ -20,6 +20,8 @@ export default function CandidateCard({ candidate, index, offset, onSelect }) {
         <span className="candidate-cta">{candidate.link ? 'Explore campaign' : 'Open candidate profile'} <span aria-hidden="true">↗</span></span>
         <span className="candidate-edge" aria-hidden="true"/>
       </div>
+      <span className="candidate-chassis" aria-hidden="true"><i/><i/><i/><i/></span>
+      <span className="candidate-spine" aria-hidden="true"/>
     </a>
   </div>;
 }

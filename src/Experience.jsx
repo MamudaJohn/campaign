@@ -4,16 +4,12 @@ import { candidateDestination } from './lib/arena.mjs';
 import './arena.css';
 import CandidateCarousel from './components/CandidateCarousel.jsx';
 import Portrait from './components/CandidatePortrait.jsx';
-import CityFallback from './components/CityFallback.jsx';
+import CampusFallback from './components/CampusFallback.jsx';
+import AcademicMotifs from './components/AcademicMotifs.jsx';
 
 const ArenaScene = lazy(() => import('./ArenaScene.jsx'));
 const Arrow = () => <span aria-hidden="true">↗</span>;
 
-function prefersMotion() { return typeof matchMedia === 'undefined' || !matchMedia('(prefers-reduced-motion: reduce)').matches; }
-function initialQuality() {
-  try { const saved = localStorage.getItem('runacos-visual-quality'); if (saved === 'cinematic' || saved === 'balanced') return saved; } catch {}
-  return typeof window !== 'undefined' && (window.innerWidth < 800 || (navigator.hardwareConcurrency && navigator.hardwareConcurrency < 5)) ? 'balanced' : 'cinematic';
-}
 function firstVisit() { try { return sessionStorage.getItem('arena-guide-seen') !== 'yes'; } catch { return true; } }
 
 function Emblem({ image, className = '' }) {
@@ -26,7 +22,7 @@ function Emblem({ image, className = '' }) {
 class SceneBoundary extends Component {
   state = { failed: false };
   static getDerivedStateFromError() { return { failed: true }; }
-  render() { return this.state.failed ? <CityFallback/> : this.props.children; }
+  render() { return this.state.failed ? <CampusFallback/> : this.props.children; }
 }
 
 function Modal({ title, className = '', children, onClose }) {
@@ -42,10 +38,9 @@ function Modal({ title, className = '', children, onClose }) {
 }
 
 const guideSteps = [
-  { index: '01', title: 'Welcome to a new dimension.', text: 'The candidate stage floats in the heart of a futuristic RUN. Follow the light, rotate the line-up, and find the voices shaping what comes next.', hint: 'YOUR FIRST MISSION: EXPLORE THE STAGE', symbol: '✧' },
-  { index: '02', title: 'Take the line-up for a spin.', text: 'Swipe or drag the cards left and right. You can also use the on-screen arrows, candidate dots, or your keyboard’s left and right arrow keys while the stage is focused.', hint: 'SWIPE  ↔  /  ARROW KEYS  ← →', symbol: '↔' },
+  { index: '01', title: 'Welcome to a new dimension.', text: 'The candidate stage floats above a connected university, with learning labs, floating ideas, and a future city on the horizon. Follow the light, rotate the line-up, and find the voices shaping what comes next.', hint: 'YOUR FIRST MISSION: EXPLORE THE STAGE', symbol: '✧' },
+  { index: '02', title: 'Take the line-up for a spin.', text: 'Swipe or drag the cards left and right. You can also use the on-screen arrows, portrait thumbnails, or your keyboard’s left and right arrow keys while the stage is focused.', hint: 'SWIPE  ↔  /  ARROW KEYS  ← →', symbol: '↔' },
   { index: '03', title: 'Step into a candidate’s world.', text: 'Tap a side card to bring it forward. Tap the large front card to open that candidate’s profile or connected campaign link. Use “View as list” to see every candidate together.', hint: 'BRING FORWARD → TAP TO OPEN', symbol: '↗' },
-  // { index: '04', title: 'Choose your view.', text: 'Cinematic enables reflections and richer lighting; Balanced uses lighter visuals. Motion pauses the scene. Candidate profiles are supplied by the campaign. Reopen this guide with the ? button whenever you need a reminder.', hint: 'VISUALS / MOTION / GUIDE - ALWAYS WITHIN REACH', symbol: '✳' },
 ];
 
 function NavigationGuide({ onClose }) {
@@ -82,7 +77,7 @@ function CandidateDirectory({ candidates, onClose }) {
             <Portrait candidate={candidate}/>
           </div>
           <span>
-            <small>{candidate.position}</small>
+            <p>{candidate.position}</p>
             <strong>{candidate.name}</strong>
             <p>{candidate.configured ? candidate.statement : 'Empty slot · ready for candidate details'}</p>
           </span>
@@ -93,7 +88,7 @@ function CandidateDirectory({ candidates, onClose }) {
 }
 
 function CandidateProfile({ candidate, config }) {
-  return <div className="experience profile-experience" data-motion="off">
+  return <div className="experience profile-experience" data-motion="on" data-quality="cinematic">
     <div className="space-grain"/>
     <header className="space-header">
       <a className="space-brand" href="./">
@@ -140,8 +135,8 @@ function JoinForm() {
 
 export default function Experience() {
   const config = campaign;
-  const [motion, setMotion] = useState(prefersMotion);
-  const [quality, setQuality] = useState(initialQuality);
+  const motion = true;
+  const quality = 'cinematic';
   const [overlay, setOverlay] = useState(() => firstVisit() ? 'guide' : null);
   const [inView, setInView] = useState(true);
   const [pageVisible, setPageVisible] = useState(true);
@@ -150,11 +145,10 @@ export default function Experience() {
   const profile = config.candidates.find(candidate => candidate.id === candidateId);
 
   useEffect(() => {
-    const query = matchMedia('(prefers-reduced-motion: reduce)');
-    const update = () => setMotion(!query.matches);
     const visibility = () => setPageVisible(!document.hidden);
-    query.addEventListener('change', update); document.addEventListener('visibilitychange', visibility);
-    return () => { query.removeEventListener('change', update); document.removeEventListener('visibilitychange', visibility); };
+    visibility();
+    document.addEventListener('visibilitychange', visibility);
+    return () => document.removeEventListener('visibilitychange', visibility);
   }, []);
   useEffect(() => {
     if (!arena.current || !('IntersectionObserver' in window)) return;
@@ -162,14 +156,10 @@ export default function Experience() {
     observer.observe(arena.current); return () => observer.disconnect();
   }, []);
   function closeGuide() { try { sessionStorage.setItem('arena-guide-seen', 'yes'); } catch {} setOverlay(null); }
-  function toggleQuality() {
-    const next = quality === 'cinematic' ? 'balanced' : 'cinematic';
-    setQuality(next);
-    try { localStorage.setItem('runacos-visual-quality', next); } catch {}
-  }
   if (profile) return <CandidateProfile candidate={profile} config={config}/>;
 
-  return <div className="experience" data-motion={motion ? 'on' : 'off'}>
+  return <div className="experience" data-motion="on" data-quality={quality}>
+    <AcademicMotifs/>
     <a className="skip-link" href="#candidate-stage">Skip to candidate stage</a><div className="space-grain" aria-hidden="true"/>
     <div className="theme-cloud" aria-hidden="true">{Array.from({ length: 12 }, (_, index) => <div className={`theme-shard shard-${index}`} key={index} style={{ '--spin': `${index * 29}deg`, '--delay': `${index * -2.3}s` }}><Emblem image={config.themeImage}/><span>{config.themeImage ? 'UPGRADE' : 'YOUR EMBLEM'}</span></div>)}</div>
     <header className="space-header">
@@ -182,15 +172,10 @@ export default function Experience() {
         <a href="#vision">The vision</a>
         <a href="#join">Get involved <Arrow/></a>
       </nav>
-      <div className="header-tools">
-        <button className="quality-button" onClick={toggleQuality} aria-label={quality === 'cinematic' ? 'Visual quality: cinematic. Switch to balanced for lighter rendering' : 'Visual quality: balanced. Switch to cinematic for reflections and bloom'} title="Choose cinematic lighting and reflections or lighter balanced visuals">
-          <span aria-hidden="true">◇</span> 
-          {quality === 'cinematic' ? 'CINEMATIC' : 'BALANCED'}
-        </button>
-        <button className="motion-button" aria-pressed={motion} onClick={() => setMotion(!motion)} aria-label={motion ? 'Pause all animations' : 'Play animations'}>{motion ? 'Ⅱ' : '▷'} <span>MOTION {motion ? 'ON' : 'OFF'}</span></button></div></header>
+</header>
     <main>
       <section className="arena" ref={arena} aria-labelledby="arena-heading" onPointerMove={event => {
-        if (!motion || event.pointerType === 'touch') return;
+        if (event.pointerType === 'touch') return;
         const bounds = event.currentTarget.getBoundingClientRect();
         pointer.current = { x: (event.clientX - bounds.left) / bounds.width * 2 - 1, y: (event.clientY - bounds.top) / bounds.height * 2 - 1 };
         event.currentTarget.style.setProperty('--look-x', `${pointer.current.x * 7}px`);
@@ -198,8 +183,8 @@ export default function Experience() {
       }} onPointerLeave={() => { pointer.current = { x: 0, y: 0 }; arena.current?.style.setProperty('--look-x', '0px'); arena.current?.style.setProperty('--look-y', '0px'); }}>
         <div className="arena-scene" aria-hidden="true">
           <SceneBoundary>
-            <Suspense fallback={<CityFallback/>}>
-              <ArenaScene motion={motion && inView && pageVisible && !overlay} pointer={pointer} quality={quality}/>
+            <Suspense fallback={<CampusFallback/>}>
+              <ArenaScene motion={inView && pageVisible} pointer={pointer} quality={quality}/>
             </Suspense>
           </SceneBoundary>
         </div>
@@ -211,13 +196,13 @@ export default function Experience() {
           <h1 id="arena-heading">Your future.<br/><em>Another dimension.</em></h1>
           <p>A new generation of voices. A shared world of possibility.<br/>Step inside. Find the people ready to shape what’s next.</p>
         </div>
-        <span className="arena-side-label side-left" aria-hidden="true">NO LIMITS. JUST NEW POSSIBILITIES.</span>
-        <span className="arena-side-label side-right" aria-hidden="true">GOLD / BLUE / BEYOND</span>
+        <span className="arena-side-label side-left" aria-hidden="true">LEARN. BUILD. DISCOVER.</span>
+        <span className="arena-side-label side-right" aria-hidden="true">TECHNOLOGY / LEARNING / COMMUNITY</span>
         <div id="candidate-stage" className="candidate-stage">
           <CandidateCarousel candidates={config.candidates} motion={motion} blocked={Boolean(overlay)} inView={inView && pageVisible} onList={() => setOverlay('directory')}/>
         </div>
         <div className="arena-floor-label" aria-hidden="true">
-          <span className="signal-dot"/> VIRTUAL AUDIENCE / A WORLD IN MOTION
+          <span className="signal-dot"/> VIRTUAL AUDIENCE / A CAMPUS IN MOTION
         </div>
         <div className="arena-bottom">
           <span>PEOPLE FIRST. PROGRESS TOGETHER.</span>
