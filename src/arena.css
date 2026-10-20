@@ -504,7 +504,7 @@ em { font-style: normal; color: var(--gold); }
   .dock-platform { bottom: 21px; width: 90%; }
   .deck-instruction { font-size: 11px; margin-top: 12px; }
   .list-toggle { font-size: 10px; padding-block: 10px; }
-  .arena-bottom { font-size: 5px; padding-block: 20px; gap: 12px; }
+  .arena-bottom { font-size: 10px; padding-block: 20px; gap: 12px; }
   .arena-bottom a { gap: 8px; }
   .arena-floor-label { bottom: 87px; letter-spacing: 1px; }
   .world-section { padding-inline: 7%; padding-top: 95px; }
