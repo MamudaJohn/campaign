@@ -35,7 +35,7 @@ function Modal({ title, className = '', children, onClose }) {
 }
 
 const guideSteps = [
-  { index: '01', title: 'Welcome to a new dimension.', text: 'There is a floating candidate stage as the home screen which shows the excellence of Redeemers university. Follow the light, rotate the line-up, and find the voices shaping what comes next.', hint: 'YOUR FIRST MISSION: EXPLORE THE STAGE', symbol: '✧' },
+  { index: '01', title: 'Welcome to The future of RUNACOS.', text: 'There is a floating candidate stage as the home screen which shows the excellence of Redeemers university. Follow the light, rotate the line-up, and find the voices shaping what comes next.', hint: 'YOUR FIRST MISSION: EXPLORE THE STAGE', symbol: '✧' },
   { index: '02', title: 'Take the line-up for a spin.', text: 'Swipe or drag the cards left and right. You can also use the on-screen arrows, portrait thumbnails, or your keyboard’s left and right arrow keys while the stage is focused.', hint: 'SWIPE  ↔  /  ARROW KEYS  ← →', symbol: '↔' },
   { index: '03', title: 'Step into a candidate’s world.', text: 'Tap a side card to bring it forward. Tap the front photo or its gold Meet button to open that candidate’s detail page. The campaign button on that page opens their external link. Use “View as list” to see every candidate together.', hint: 'BRING FORWARD → TAP TO OPEN', symbol: '↗' },
 ];
